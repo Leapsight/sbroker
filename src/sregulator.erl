@@ -609,8 +609,7 @@ init_it(Starter, Parent, Name, Mod, Args, Opts) ->
             Reason = {bad_return_value, Other},
             init_stop(Starter, Name, Reason)
     catch
-        Class:Reason ->
-            Stack = erlang:get_stacktrace(),
+        Class:Reason:Stack ->
             Reason2 = sbroker_handlers:exit_reason({Class, Reason, Stack}),
             init_stop(Starter, Name, Reason2)
     end.
@@ -1105,8 +1104,8 @@ config_change(#config{mod=Mod, args=Args}) ->
         Other ->
             {error, {bad_return_value, Other}}
     catch
-        Class:Reason ->
-            {error, {Class, Reason, erlang:get_stacktrace()}}
+        Class:Reason:Stack ->
+            {error, {Class, Reason, Stack}}
     end.
 
 config_meters(QMod, QArgs, VMod, VArgs, MeterArgs) ->
